@@ -45,14 +45,28 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
 
-    - name: Delete Files
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: false
+        
+        # all of these default to true, but feel free to set to
+        # "false" if necessary for your workflow
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
+    - name: Initialization
       run: |
-        echo "Deleting files, please wait ..."
-        docker rmi `docker images -q`
-        sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
-        sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* adoptopenjdk* mysql* php* mongodb* dotnet* moby* snapd* || true
-        sudo -E apt-get -y autoremove --purge
-        sudo -E apt-get clean
+        echo "Initializing environment ..."
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
         
     - name: Check Space
       run: |
