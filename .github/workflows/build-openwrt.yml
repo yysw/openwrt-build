@@ -65,6 +65,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
+        sudo apt-get update && sudo apt-get install -y qemu-utils
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
@@ -115,7 +116,7 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 V=s
+        make -j$(nproc) || make -j1 V=vs
 
     - name: Check space usage
       if: (!cancelled())
