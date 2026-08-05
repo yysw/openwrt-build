@@ -18,3 +18,6 @@ rm -rf feeds/*/luci-app-fchomo
 rm -rf package/feeds/*/luci-app-fchomo
 rm -rf feeds/*/nikki
 rm -rf package/feeds/*/nikki
+
+# force lower down rpcd-mod-luci and other luci plugins' CMake version requirements
+find feeds/luci/ -type f -name "CMakeLists.txt" -exec sed -i 's/3.31/3.25/g' {} \;
