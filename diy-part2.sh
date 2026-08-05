@@ -12,3 +12,9 @@
 
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.16.1/g' package/base-files/files/bin/config_generate
+
+# delete recusively dependencies
+rm -rf feeds/*/luci-app-fchomo
+rm -rf package/feeds/*/luci-app-fchomo
+rm -rf feeds/*/nikki
+rm -rf package/feeds/*/nikki
