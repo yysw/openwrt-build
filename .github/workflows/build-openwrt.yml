@@ -48,12 +48,7 @@ jobs:
     - name: Free Disk Space (Ubuntu)
       uses: jlumbroso/free-disk-space@main
       with:
-        # this might remove tools that are actually needed,
-        # if set to "true" but frees about 6 GB
         tool-cache: false
-
-        # all of these default to true, but feel free to set to
-        # "false" if necessary for your workflow
         android: true
         dotnet: true
         haskell: true
@@ -138,7 +133,8 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name : Upload artifact
+    - name: Upload artifact
+      if: success()
       uses: actions/upload-artifact@master
       with:
         name: OpenWrt
@@ -146,22 +142,35 @@ jobs:
 
     - name: Organize files
       id: organize
-      if: (!cancelled())
+      if: success()
       run: |
         cd openwrt/bin/targets/*/*
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
+    - name: Verify firmware
+      if: success()
+      run: |
+        echo "Firmware directory:"
+        ls -lh ${{ env.FIRMWARE }}
+
+        if ! find "${{ env.FIRMWARE }}" \
+          \( -name "*.img*" -o -name "*sysupgrade*" -o -name "*.bin" \) \
+          | grep -q .; then
+          echo "No firmware image found!"
+          exit 1
+        fi
+
     - name: Generate release tag
       id: tag
-      if: steps.organize.outputs.status == 'success' && !cancelled()
+      if: success()
       run: |
         echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
 
     - name: Upload firmware to release
+      if: success() && steps.tag.outputs.release_tag != ''
       uses: softprops/action-gh-release@v2
-      if: steps.tag.outputs.release_tag != '' && !cancelled()
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
