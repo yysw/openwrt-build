@@ -127,7 +127,17 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 V=s
+        make -j"$(nproc)" || {
+          make -j1 V=sc 2>&1 | tee "$GITHUB_WORKSPACE/compile-error.log"
+          exit "${PIPESTATUS[0]}"
+        }
+    
+    - name: Upload compile log
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: compile-error-log
+        path: compile-error.log
 
     - name: Check space usage
       if: (!cancelled())
