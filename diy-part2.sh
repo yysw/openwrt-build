@@ -21,3 +21,7 @@ rm -rf package/feeds/*/nikki
 
 # force lower down rpcd-mod-luci and other luci plugins' CMake version requirements
 find feeds/luci/ -type f -name "CMakeLists.txt" -exec sed -i 's/3.31/3.25/g' {} \;
+
+# Remove obsolete SSR components that are no longer supported and causing SSL build failures
+rm -rf feeds/*/shadowsocksr-libev package/feeds/*/shadowsocksr-libev
+rm -rf feeds/*/luci-app-ssr-plus package/feeds/*/luci-app-ssr-plus
