@@ -10,28 +10,36 @@
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 
-# Modify default IP
-sed -i 's/192.168.1.1/192.168.16.1/g' package/base-files/files/bin/config_generate
+# Modify the default IP address
+sed -i 's/192.168.1.1/192.168.16.1/g' \
+  package/base-files/files/bin/config_generate
 
-# delete recusively dependencies
+# Recursively remove fchomo and nikki packages
 rm -rf feeds/*/luci-app-fchomo
 rm -rf package/feeds/*/luci-app-fchomo
 rm -rf feeds/*/nikki
 rm -rf package/feeds/*/nikki
 
-# force lower down rpcd-mod-luci and other luci plugins' CMake version requirements
-find feeds/luci/ -type f -name "CMakeLists.txt" -exec sed -i 's/3.31/3.25/g' {} \;
+# Lower the CMake version requirement for rpcd-mod-luci and other LuCI plugins
+find feeds/luci/ -type f -name "CMakeLists.txt" \
+  -exec sed -i 's/3\.31/3.25/g' {} \;
 
-# Remove obsolete SSR components that are no longer supported and causing SSL build failures
-rm -rf feeds/*/shadowsocksr-libev package/feeds/*/shadowsocksr-libev
-rm -rf feeds/*/luci-app-ssr-plus package/feeds/*/luci-app-ssr-plus
+# Remove obsolete SSR components that are no longer supported
+# and may cause SSL build failures
+rm -rf feeds/*/shadowsocksr-libev
+rm -rf package/feeds/*/shadowsocksr-libev
+rm -rf feeds/*/luci-app-ssr-plus
+rm -rf package/feeds/*/luci-app-ssr-plus
 
-# Remove luci-app-nikki due to missing required core components
+# Remove luci-app-nikki because its required core package is unavailable
 rm -rf feeds/passwall_dep/luci-app-nikki
+rm -rf package/feeds/passwall_dep/luci-app-nikki
 
-# Remove homeproxy and dockerman due to missing ucode module dependencies
+# Remove HomeProxy and Dockerman because required ucode modules are unavailable
 rm -rf feeds/luci/applications/luci-app-homeproxy
+rm -rf package/feeds/luci/luci-app-homeproxy
 rm -rf feeds/luci/applications/luci-app-dockerman
+rm -rf package/feeds/luci/luci-app-dockerman
 
-# Remove HAProxy if advanced load balancing is not needed to avoid libcrypt-compat dependency issues
-rm -rf feeds/packages/net/haproxy
+# Keep HAProxy because luci-app-passwall depends on it
+# Do not remove feeds/packages/net/haproxy
