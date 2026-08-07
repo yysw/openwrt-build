@@ -43,3 +43,11 @@ rm -rf package/feeds/luci/luci-app-dockerman
 
 # Keep HAProxy because luci-app-passwall depends on it
 # Do not remove feeds/packages/net/haproxy
+
+# Force Tailscale to a specific version before package download/compile
+if [ -f feeds/packages/net/tailscale/Makefile ]; then
+  sed -i 's/PKG_VERSION:=.*/PKG_VERSION:=1.102.0/g' \
+    feeds/packages/net/tailscale/Makefile
+  sed -i 's/PKG_HASH:=.*/PKG_HASH:=skip/g' \
+    feeds/packages/net/tailscale/Makefile
+fi
