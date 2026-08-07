@@ -36,6 +36,10 @@ env:
   UPLOAD_FIRMWARE: false
   TZ: Asia/Shanghai
 
+permissions:
+  contents: write
+  actions: write
+  
 jobs:
   build:
     runs-on: ubuntu-22.04
