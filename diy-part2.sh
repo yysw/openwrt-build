@@ -46,7 +46,7 @@ rm -rf package/feeds/luci/luci-app-dockerman
 
 # Force Tailscale to a specific version before package download/compile
 if [ -f feeds/packages/net/tailscale/Makefile ]; then
-  sed -i 's/PKG_VERSION:=.*/PKG_VERSION:=1.102.0/g' \
+  sed -i 's/PKG_VERSION:=.*/PKG_VERSION:=1.102.2/g' \
     feeds/packages/net/tailscale/Makefile
   sed -i 's/PKG_HASH:=.*/PKG_HASH:=skip/g' \
     feeds/packages/net/tailscale/Makefile
