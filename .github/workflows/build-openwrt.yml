@@ -64,7 +64,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo apt-get update && sudo apt-get install -y qemu-utils bc lm-sensors pciutils libpam0g-dev libtiff-dev
+        sudo apt-get update && sudo apt-get install -y qemu-utils bc lm-sensors pciutils libpam0g-dev libtiff-dev ccache
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
@@ -115,7 +115,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: openwrt/.ccache
-        key: ${{ runner.os }}-openwrt-ccache-${{ github.sha }}
+        key: ${{ runner.os }}-openwrt-ccache-${{ github.ref_name }}-${{ steps.feeds-hash.outputs.hash }}
         restore-keys: |
           ${{ runner.os }}-openwrt-ccache-
       
@@ -144,6 +144,9 @@ jobs:
 
     - name: Compile the firmware
       id: compile
+      env:
+        CCACHE_DIR: ${{ github.workspace }}/openwrt/.ccache
+        CCACHE_MAXSIZE: 2G
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
