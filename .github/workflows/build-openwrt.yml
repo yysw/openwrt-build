@@ -135,6 +135,9 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
+    - name: Clean Go module cache
+      run: rm -rf openwrt/dl/go-mod-cache
+
     - name: Download package
       id: package
       run: |
