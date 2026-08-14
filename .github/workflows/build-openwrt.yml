@@ -12,6 +12,7 @@ name: Build OpenWrt
 
 on:
   repository_dispatch:
+  workflow_dispatch:
   release:
     types: published
   push:
@@ -21,9 +22,6 @@ on:
     - '.'
 #  schedule:
 #    - cron: 0 8 * * 5
-  watch:
-    types: started
-
 env:
   REPO_URL: https://github.com/yysw/lede.git
   REPO_BRANCH: master
@@ -101,7 +99,7 @@ jobs:
         echo "epoch=$(date +'%G-W%V')" >> "$GITHUB_OUTPUT"
 
     - name: Restore cache for dl
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: openwrt/dl
         key: ${{ runner.os }}-openwrt-dl-v2-${{ steps.cache-metadata.outputs.feeds_hash }}-${{ steps.cache-metadata.outputs.epoch }}
@@ -113,7 +111,7 @@ jobs:
       run: mkdir -p openwrt/.ccache
 
     - name: Restore cache for ccache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: openwrt/.ccache
         key: ${{ runner.os }}-openwrt-ccache-v2-${{ github.ref_name }}-${{ steps.cache-metadata.outputs.feeds_hash }}-${{ hashFiles('.config', 'diy-part1.sh', 'diy-part2.sh') }}-${{ steps.cache-metadata.outputs.epoch }}
